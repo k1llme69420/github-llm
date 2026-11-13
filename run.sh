@@ -68,6 +68,7 @@ EOF
 
 echo "Embedded Python script has finished."
 echo "Saving updated chat history to branch..."
+
 cd memory
 git config user.name "GitHub Actions LLM"
 git config user.email "actions@github.com"
