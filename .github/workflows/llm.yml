@@ -1,3 +1,21 @@
+name: Serverless GitHub LLM
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Your message to the LLM'
+        required: true
+        type: string
+      clear_history:
+        description: 'Reset conversation memory before replying?'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
 jobs:
   chat:
     runs-on: ubuntu-latest
