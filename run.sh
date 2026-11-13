@@ -66,6 +66,7 @@ if summary_path:
         f.write(f"### User\n{quoted_prompt}\n\n### Assistant\n{quoted_reply}\n")
 EOF
 
+echo "Embedded Python script has finished."
 echo "Saving updated chat history to branch..."
 cd memory
 git config user.name "GitHub Actions LLM"
