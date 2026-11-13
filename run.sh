@@ -44,7 +44,7 @@ if summary_path:
     quoted_reply = "\n".join(f"> {line}" if line.strip() else ">" for line in reply.splitlines())
     
     with open(summary_path, "w", encoding="utf-8") as f:
-        f.write(f"### 💬 You\n{quoted_prompt}\n\n### 🤖 Assistant\n{quoted_reply}\n")
+        f.write(f"### User\n{quoted_prompt}\n\n### Assistant\n{quoted_reply}\n")
 EOF
 
 echo "Saving updated chat history to branch..."
