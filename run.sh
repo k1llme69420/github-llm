@@ -39,10 +39,12 @@ with open(history_file, "w") as f:
 
 summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
 if summary_path:
-    quoted_prompt = "\n".join(f"> {line}" for line in prompt.splitlines())
-    quoted_reply = "\n".join(f"> {line}" for line in reply.splitlines())
-    with open(summary_path, "w") as f:
-        f.write(f"### You:\n{quoted_prompt}\n\n### Assistant:\n{quoted_reply}\n")
+    # Safely format multi-line prompts and replies into proper markdown blockquotes
+    quoted_prompt = "\n".join(f"> {line}" if line.strip() else ">" for line in prompt.splitlines())
+    quoted_reply = "\n".join(f"> {line}" if line.strip() else ">" for line in reply.splitlines())
+    
+    with open(summary_path, "w", encoding="utf-8") as f:
+        f.write(f"### 💬 You\n{quoted_prompt}\n\n### 🤖 Assistant\n{quoted_reply}\n")
 EOF
 
 echo "Saving updated chat history to branch..."
