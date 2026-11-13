@@ -41,19 +41,6 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-llama-cpp
 
-      - name: Cache Model GGUF
-        id: cache-model
-        uses: actions/cache@v4
-        with:
-          path: model.gguf
-          key: model-gguf-${{ hashFiles('weights/model_part_*') }}
-
-      - name: Reassemble Model Weights (If Cache Misses)
-        if: steps.cache-model.outputs.cache-hit != 'true'
-        run: |
-          echo "Cache miss! Stitching chunks together..."
-          cat weights/model_part_* > model.gguf
-
       - name: Run Inference & Update Memory
         env:
           USER_PROMPT: ${{ github.event.inputs.prompt }}
