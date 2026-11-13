@@ -42,8 +42,8 @@ llm = Llama(
     model_path="model.gguf", 
     n_ctx=2048, 
     n_threads=4, 
-    verbose=False
-    # chat_format="chatml"  <-- Uncomment and adjust if your model needs a specific format
+    verbose=False,
+    chat_format="llama-3"
 )
 
 response = llm.create_chat_completion(
