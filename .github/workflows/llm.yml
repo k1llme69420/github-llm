@@ -1,0 +1,50 @@
+name: Serverless GitHub LLM
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Your message to the LLM'
+        required: true
+        type: string
+      clear_history:
+        description: 'Reset conversation memory before replying?'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  chat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Main Code
+        uses: actions/checkout@v4
+
+      - name: Checkout Model Weights
+        uses: actions/checkout@v4
+        with:
+          ref: model-weights
+          path: weights
+
+      - name: Checkout Chat History
+        uses: actions/checkout@v4
+        with:
+          ref: chat-history
+          path: memory
+
+      - name: Cache Pip Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-llama-cpp
+
+      - name: Run Inference & Update Memory
+        env:
+          USER_PROMPT: ${{ github.event.inputs.prompt }}
+          CLEAR_HISTORY: ${{ github.event.inputs.clear_history }}
+        run: |
+          sed -i 's/\r$//' run.sh
+          bash run.sh
