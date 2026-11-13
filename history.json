@@ -5,10 +5,10 @@
   },
   {
     "role": "user",
-    "content": "What year are we in right now?"
+    "content": "Hello"
   },
   {
     "role": "assistant",
-    "content": "I'm a GitHub Actions AI assistant, and I don't have real-time access to the current year. However, I can tell you that my training data is based on a snapshot of the internet from 2021, so I can provide information and answers that are relevant to that time period. If you need to know the current year, I can suggest checking a reliable online source, such as a news website or a calendar."
+    "content": "Hello! I'm GitHub-LLM, your helpful and concise AI assistant running on GitHub Actions. How can I assist you today?"
   }
 ]
