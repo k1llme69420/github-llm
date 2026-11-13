@@ -16,33 +16,27 @@ history_file = "memory/history.json"
 prompt = os.environ["USER_PROMPT"]
 clear_history = os.environ["CLEAR_HISTORY"].lower() == "true"
 
-# 1. Load or initialize history
 if clear_history or not os.path.exists(history_file):
-    history = [{"role": "system", "content": "You are a helpful, concise AI assistant."}]
+    history = [{"role": "system", "content": "You are a helpful, concise AI assistant running GitHub Actions. Your name is GitHub-LLM."}]
 else:
     with open(history_file, "r") as f:
         history = json.load(f)
     if not history:
-        history = [{"role": "system", "content": "You are a helpful, concise AI assistant."}]
+        history = [{"role": "system", "content": "You are a helpful, concise AI assistant running GitHub Actions. Your name is GitHub-LLM."}]
 
-# 2. Append current user prompt
 history.append({"role": "user", "content": prompt})
 
-# 3. Safely trim history while maintaining strict User/Assistant alternation
 system_prompt = history[0]
 messages = history[1:]
 
-# Keep at most the last 6 messages to fit context window
 if len(messages) > 6:
     messages = messages[-6:]
 
-# Ensure the trimmed list always starts with a 'user' message (never an orphaned 'assistant')
 while messages and messages[0]["role"] != "user":
     messages.pop(0)
 
 trimmed_history = [system_prompt] + messages
 
-# 4. Run inference
 # Note: If your model requires a specific format (e.g., chat_format="chatml" or "llama-3"), add it here:
 llm = Llama(
     model_path="model.gguf", 
@@ -58,13 +52,11 @@ response = llm.create_chat_completion(
 )
 reply = response["choices"][0]["message"]["content"]
 
-# 5. Append assistant reply and save back to history
 history.append({"role": "assistant", "content": reply})
 
 with open(history_file, "w") as f:
     json.dump(history, f, indent=2)
 
-# 6. Output to GitHub Step Summary
 summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
 if summary_path:
     quoted_prompt = "\n".join(f"> {line}" if line.strip() else ">" for line in prompt.splitlines())
