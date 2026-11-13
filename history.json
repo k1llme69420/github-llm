@@ -10,5 +10,13 @@
   {
     "role": "assistant",
     "content": "How can I assist you today?"
+  },
+  {
+    "role": "user",
+    "content": "What did i previously say?"
+  },
+  {
+    "role": "assistant",
+    "content": "This is the beginning of our conversation, and you haven't said anything previously. What would you like to talk about?"
   }
 ]
