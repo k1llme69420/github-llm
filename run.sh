@@ -16,6 +16,7 @@ history_file = "memory/history.json"
 prompt = os.environ["USER_PROMPT"]
 clear_history = os.environ["CLEAR_HISTORY"].lower() == "true"
 
+# 1. Load or initialize history
 if clear_history or not os.path.exists(history_file):
     history = [{"role": "system", "content": "You are a helpful, concise AI assistant."}]
 else:
@@ -24,22 +25,48 @@ else:
     if not history:
         history = [{"role": "system", "content": "You are a helpful, concise AI assistant."}]
 
+# 2. Append current user prompt
 history.append({"role": "user", "content": prompt})
 
-trimmed_history = [history[0]] + history[-6:] if len(history) > 7 else history
+# 3. Safely trim history while maintaining strict User/Assistant alternation
+system_prompt = history[0]
+messages = history[1:]
 
-llm = Llama(model_path="model.gguf", n_ctx=2048, n_threads=4, verbose=False)
-response = llm.create_chat_completion(messages=trimmed_history, max_tokens=512)
+# Keep at most the last 6 messages to fit context window
+if len(messages) > 6:
+    messages = messages[-6:]
+
+# Ensure the trimmed list always starts with a 'user' message (never an orphaned 'assistant')
+while messages and messages[0]["role"] != "user":
+    messages.pop(0)
+
+trimmed_history = [system_prompt] + messages
+
+# 4. Run inference
+# Note: If your model requires a specific format (e.g., chat_format="chatml" or "llama-3"), add it here:
+llm = Llama(
+    model_path="model.gguf", 
+    n_ctx=2048, 
+    n_threads=4, 
+    verbose=False
+    # chat_format="chatml"  <-- Uncomment and adjust if your model needs a specific format
+)
+
+response = llm.create_chat_completion(
+    messages=trimmed_history, 
+    max_tokens=512
+)
 reply = response["choices"][0]["message"]["content"]
 
+# 5. Append assistant reply and save back to history
 history.append({"role": "assistant", "content": reply})
 
 with open(history_file, "w") as f:
     json.dump(history, f, indent=2)
 
+# 6. Output to GitHub Step Summary
 summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
 if summary_path:
-    # Safely format multi-line prompts and replies into proper markdown blockquotes
     quoted_prompt = "\n".join(f"> {line}" if line.strip() else ">" for line in prompt.splitlines())
     quoted_reply = "\n".join(f"> {line}" if line.strip() else ">" for line in reply.splitlines())
     
