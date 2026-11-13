@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "role": "system",
+    "content": "You are a helpful, concise AI assistant."
+  },
+  {
+    "role": "user",
+    "content": "Hello"
+  },
+  {
+    "role": "assistant",
+    "content": "How can I assist you today?"
+  }
+]
