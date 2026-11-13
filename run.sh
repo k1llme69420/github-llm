@@ -43,8 +43,6 @@ if summary_path:
     quoted_reply = "\n".join(f"> {line}" for line in reply.splitlines())
     with open(summary_path, "w") as f:
         f.write(f"### You:\n{quoted_prompt}\n\n### Assistant:\n{quoted_reply}\n")
-
-print("\n--- RESPONSE ---\n" + reply)
 EOF
 
 echo "Saving updated chat history to branch..."
